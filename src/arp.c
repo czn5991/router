@@ -21,18 +21,18 @@ void arp_send_request(iface_info_t *iface, u32 dst_ip)
 	struct ether_header *ether_hdr = (struct ether_header *)packet;
 	struct ether_arp *arp_hdr = (struct ether_arp*)(packet + ETHER_HDR_SIZE);
 	
-	header->ether_type = htons(ETH_P_ARP);
-	memset(header->ether_dhost, 0xff, ETH_ALEN);
-	memcpy(header->ether_shost, iface->mac, ETH_ALEN);
-	arp->arp_hrd = htons(0x01);
-	arp->arp_pro = htons(0x0800);
+	ether_hdr->ether_type = htons(ETH_P_ARP);
+	memset(ether_hdr->ether_dhost, 0xff, ETH_ALEN);
+	memcpy(ether_hdr->ether_shost, iface->mac, ETH_ALEN);
+	arp_hdr->arp_hrd = htons(0x01);
+	arp_hdr->arp_pro = htons(0x0800);
 	arp_hdr->arp_hln = 6;
 	arp_hdr->arp_pln = 4;
-	arp->arp_op = htons(ARPOP_REQUEST);
-	arp->arp_spa = htonl(iface->ip);
-	arp->arp_tpa = htonl(dst_ip);
-	memset(arp->arp_tha, 0, ETH_ALEN);
-	memcpy(arp->arp_sha, iface->mac, ETH_ALEN);
+	arp_hdr->arp_op = htons(ARPOP_REQUEST);
+	arp_hdr->arp_spa = htonl(iface->ip);
+	arp_hdr->arp_tpa = htonl(dst_ip);
+	memset(arp_hdr->arp_tha, 0, ETH_ALEN);
+	memcpy(arp_hdr->arp_sha, iface->mac, ETH_ALEN);
 
 	iface_send_packet(iface, packet, sizeof(struct ether_arp) + ETHER_HDR_SIZE);
 }
@@ -57,8 +57,8 @@ void arp_send_reply(iface_info_t *iface, struct ether_arp *req_hdr)
 	arp_hdr->arp_op = htons(ARPOP_REPLY);
 	arp_hdr->arp_spa = htonl(iface->ip);
 	arp_hdr->arp_tpa = htonl(req_hdr->arp_spa);
-	memcpy(arp->arp_sha, iface->mac, ETH_ALEN);
-	memcpy(arp->arp_tha, req_hdr->arp_sha, ETH_ALEN);
+	memcpy(arp_hdr->arp_sha, iface->mac, ETH_ALEN);
+	memcpy(arp_hdr->arp_tha, req_hdr->arp_sha, ETH_ALEN);
 
 	iface_send_packet(iface,packet, sizeof(struct ether_arp) + ETHER_HDR_SIZE);
 }
@@ -72,10 +72,10 @@ void handle_arp_packet(iface_info_t *iface, char *packet, int len)
 		{
 		case ARPOP_REQUEST:
 			arp_send_reply(iface, arp_hdr);
-			arpcache_insert(ntohl(arp_hdr->arp_spa), arp->arp_sha);
+			arpcache_insert(ntohl(arp_hdr->arp_spa), arp_hdr->arp_sha);
 			break;
 		case ARPOP_REPLY:
-			arpcache_insert(ntohl(arp_hdr->arp_spa), arp->arp_sha);
+			arpcache_insert(ntohl(arp_hdr->arp_spa), arp_hdr->arp_sha);
 			break;
 		default:
 			break;

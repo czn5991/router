@@ -63,7 +63,7 @@ int arpcache_lookup(u32 ip4, u8 mac[ETH_ALEN])
 			return 1;
 		}
 	}
-	thread_mutex_unlock(&arpcache.lock);
+	pthread_mutex_unlock(&arpcache.lock);
 	return 0;
 }
 
