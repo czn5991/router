@@ -53,7 +53,7 @@ void arpcache_destroy()
 // and mac address with the given arguments
 int arpcache_lookup(u32 ip4, u8 mac[ETH_ALEN])
 {
-	fprintf(stderr, "TODO: lookup ip address in arp cache.\n");
+	//fprintf(stderr, "TODO: lookup ip address in arp cache.\n");
 
 	pthread_mutex_lock(&arpcache.lock);
 	for (int i = 0; i < MAX_ARP_SIZE; i++){
@@ -76,7 +76,7 @@ int arpcache_lookup(u32 ip4, u8 mac[ETH_ALEN])
 // with the given IP address and iface, append the packet, and send arp request.
 void arpcache_append_packet(iface_info_t *iface, u32 ip4, char *packet, int len)
 {
-	fprintf(stderr, "TODO: append the ip address if lookup failed, and send arp request if necessary.\n");
+	//fprintf(stderr, "TODO: append the ip address if lookup failed, and send arp request if necessary.\n");
 
 	pthread_mutex_lock(&arpcache.lock);
 	struct arp_req *entry = NULL, *q;
@@ -111,7 +111,7 @@ void arpcache_append_packet(iface_info_t *iface, u32 ip4, char *packet, int len)
 // them out
 void arpcache_insert(u32 ip4, u8 mac[ETH_ALEN])
 {
-	fprintf(stderr, "TODO: insert ip->mac entry, and send all the pending packets.\n");
+	//fprintf(stderr, "TODO: insert ip->mac entry, and send all the pending packets.\n");
 
 	pthread_mutex_lock(&arpcache.lock);
 
@@ -164,7 +164,7 @@ void *arpcache_sweep(void *arg)
 {
 	while (1) {
 		sleep(1);
-		fprintf(stderr, "TODO: sweep arpcache periodically: remove old entries, resend arp requests .\n");
+		//fprintf(stderr, "TODO: sweep arpcache periodically: remove old entries, resend arp requests .\n");
 
 		pthread_mutex_lock(&arpcache.lock);
 		

@@ -15,7 +15,7 @@
 // iface_send_packet
 void arp_send_request(iface_info_t *iface, u32 dst_ip)
 {
-	fprintf(stderr, "TODO: send arp request when lookup failed in arpcache.\n");
+	//fprintf(stderr, "TODO: send arp request when lookup failed in arpcache.\n");
 
 	char *packet = (char *)malloc(sizeof(struct ether_arp) + ETHER_HDR_SIZE);
 	struct ether_header *ether_hdr = (struct ether_header *)packet;
@@ -41,11 +41,11 @@ void arp_send_request(iface_info_t *iface, u32 dst_ip)
 // through iface_send_packet
 void arp_send_reply(iface_info_t *iface, struct ether_arp *req_hdr)
 {
-	fprintf(stderr, "TODO: send arp reply when receiving arp request.\n");
+	//fprintf(stderr, "TODO: send arp reply when receiving arp request.\n");
 
 	char *packet = (char *)malloc(sizeof(struct ether_arp) + ETHER_HDR_SIZE);
 	struct ether_header *ether_hdr = (struct ether_header *)packet;
-	struct ether_arp *arp_hdr = (struct arp_hdr *)(packet + ETHER_HDR_SIZE);
+	struct ether_arp *arp_hdr = (struct ether_arp *)(packet + ETHER_HDR_SIZE);
 	
 	ether_hdr->ether_type = htons(ETH_P_ARP);
 	memcpy(ether_hdr->ether_dhost, req_hdr->arp_sha, ETH_ALEN);
@@ -65,8 +65,8 @@ void arp_send_reply(iface_info_t *iface, struct ether_arp *req_hdr)
 
 void handle_arp_packet(iface_info_t *iface, char *packet, int len)
 {
-	fprintf(stderr, "TODO: process arp packet: arp request & arp reply.\n");
-	struct ether_arp *arp_hdr = (struct arp_hdr *)(packet + ETHER_HDR_SIZE);
+	//fprintf(stderr, "TODO: process arp packet: arp request & arp reply.\n");
+	struct ether_arp *arp_hdr = (struct ether_arp *)(packet + ETHER_HDR_SIZE);
 	if(ntohl(arp_hdr->arp_tpa) == iface->ip){
 		switch (ntohs(arp_hdr->arp_op))
 		{
