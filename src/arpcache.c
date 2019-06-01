@@ -137,7 +137,9 @@ void arpcache_insert(u32 ip4, u8 mac[ETH_ALEN])
 			list_for_each_entry_safe(pkt_entry, pkt_q, &(entry->cached_packets), list) {
 				struct ether_header *ether_hdr = (struct ether_header *)pkt_entry->packet;
 				memcpy(ether_hdr->ether_dhost, mac, ETH_ALEN);
+				pthread_mutex_unlock(&arpcache.lock);
 				iface_send_packet(entry->iface, pkt_entry->packet, pkt_entry->len);
+				pthread_mutex_lock(&arpcache.lock);
 				list_delete_entry(&(pkt_entry->list));
 				free(pkt_entry);
 			}
@@ -178,7 +180,9 @@ void *arpcache_sweep(void *arg)
 			if (req_entry->retries > ARP_REQUEST_MAX_RETRIES){
 				struct cached_pkt *pkt_entry = NULL, *pkt_q;
 				list_for_each_entry_safe(pkt_entry, pkt_q, &(req_entry->cached_packets), list) {
+					pthread_mutex_unlock(&arpcache.lock);
 					icmp_send_packet(pkt_entry->packet, pkt_entry->len, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
+					pthread_mutex_lock(&arpcache.lock);
 					list_delete_entry(&(pkt_entry->list));
 					free(pkt_entry);
 				}
@@ -186,7 +190,9 @@ void *arpcache_sweep(void *arg)
 				free(req_entry);
 			}
 			else{
+				pthread_mutex_unlock(&arpcache.lock);
 				arp_send_request(req_entry->iface, req_entry->ip4);
+				pthread_mutex_lock(&arpcache.lock);
 				req_entry->retries += 1;		
 			}
 		}
